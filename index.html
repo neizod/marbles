@@ -107,7 +107,7 @@ function draw_board_outline() {
 }
 
 function draw_marbles(which) {
-    var marbles = select_marbles(which);
+    var marbles = select_marbles(which),
         radius = which * (BIG_R - 1.50*SMALL_R),
         nudge = which * BIG_NUDGE;
     for (var i=0; i<N_MARBLES; i++) {
