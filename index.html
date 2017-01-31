@@ -52,7 +52,7 @@ function random_sign() {
 function create_each_marbles(which) {
     var list = [];
     for (var i=0; i<N_MARBLES; i++) {
-        factor = (i == N_BOTH_FST) ? -1 : +1 ;
+        var factor = (i == N_BOTH_FST) ? -1 : +1 ;
         list.push(factor * which);
     }
     return list;
@@ -114,11 +114,7 @@ function draw_marbles(which) {
         if (i === N_BOTH_FST) continue;
         var x = radius * Math.sin(2*i/N_MARBLES*Math.PI) + nudge;
             y = radius * Math.cos(2*i/N_MARBLES*Math.PI);
-        if (marbles[i] == +1) {
-            color = 'red';
-        } else {
-            color = 'blue';
-        }
+        var color = marbles[i] == +1 ? 'red' : 'blue' ;
         circle(x, y, SMALL_R, color);
     }
 }
