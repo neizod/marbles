@@ -1,0 +1,179 @@
+<canvas id="canvas" width="1000" height="600"></canvas>
+<div class="control-box">
+    <h3>Left</h3>
+    <button id="left-ccw">↪️</button>
+    <button id="left-cw">↩️</button>
+</div>
+<div class="control-box">
+    <h3>Right</h3>
+    <button id="right-ccw">↪️</button>
+    <button id="right-cw">↩️</button>
+</div>
+<div class="control-box">
+    <h3>Rotate Marbles</h3>
+    <button id="game-shuffle">Shuffle</button>
+    <hr />
+    <button id="game-clear">Clear</button>
+</div>
+
+
+<script>
+var canvas = document.getElementById('canvas'),
+    ctx = canvas.getContext('2d'),
+    BIG_R = 260,
+    BIG_NUDGE = 180,
+    SMALL_R = 25,
+    N_MARBLES = 20,
+    N_BOTH_FST = 13,
+    N_BOTH_SND = 17;
+    MARBLES_LS = null,
+    MARBLES_RS = null,
+    SHUFFLE_MOVE = 8,
+    SHUFFLE_BASE = 23,
+    SHUFFLE_MORE = 42;
+ctx.translate(canvas.width/2, canvas.height/2);
+
+function rotate_list(list, reverse=true) {
+    if (reverse) {
+        return list.push(list.shift());
+    } else {
+        return list.unshift(list.pop());
+    }
+}
+
+function random_int(start, stop) {
+    return Math.floor(Math.random() * (stop - start + 1) + start);
+}
+
+function random_sign() {
+    return random_int(0, 1) == 1 ? +1 : -1 ;
+}
+
+function create_each_marbles(which) {
+    var list = [];
+    for (var i=0; i<N_MARBLES; i++) {
+        factor = (i == N_BOTH_FST) ? -1 : +1 ;
+        list.push(factor * which);
+    }
+    return list;
+}
+
+function get_new_marbles(shuffle=0) {
+    MARBLES_LS = create_each_marbles(-1);
+    MARBLES_RS = create_each_marbles(+1);
+    if (shuffle == 1) {
+        shuffle_marbles();
+    }
+}
+
+function shuffle_marbles() {
+    var n_shuf = random_int(SHUFFLE_BASE, SHUFFLE_MORE);
+    for (var i=0; i<n_shuf; i++) {
+        var which = random_sign(),
+            direction = random_sign(),
+            n_move = random_int(1, SHUFFLE_MOVE);
+        for (var j=0; j<n_move; j++) {
+            rotate_marbles(which, direction);
+        }
+    }
+}
+
+function select_marbles(which) {
+    return which == +1 ? MARBLES_RS : MARBLES_LS ;
+}
+
+function rotate_marbles(which, direction) {
+    var main_marbles = select_marbles(which),
+        another_marbles = select_marbles(-which),
+        clockwise = direction == +1;
+    rotate_list(main_marbles, clockwise);
+    another_marbles[N_BOTH_FST] = main_marbles[N_BOTH_SND];
+    another_marbles[N_BOTH_SND] = main_marbles[N_BOTH_FST];
+}
+
+function circle(x, y, r, color=null) {
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 2*Math.PI);
+    ctx.stroke();
+    if (color) {
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+}
+
+function draw_board_outline() {
+    circle(-BIG_NUDGE, 0, BIG_R);
+    circle(+BIG_NUDGE, 0, BIG_R);
+}
+
+function draw_marbles(which) {
+    var marbles = select_marbles(which);
+        radius = which * (BIG_R - 1.50*SMALL_R),
+        nudge = which * BIG_NUDGE;
+    for (var i=0; i<N_MARBLES; i++) {
+        if (i === N_BOTH_FST) continue;
+        var x = radius * Math.sin(2*i/N_MARBLES*Math.PI) + nudge;
+            y = radius * Math.cos(2*i/N_MARBLES*Math.PI);
+        if (marbles[i] == +1) {
+            color = 'red';
+        } else {
+            color = 'blue';
+        }
+        circle(x, y, SMALL_R, color);
+    }
+}
+
+function draw() {
+    draw_board_outline();
+    draw_marbles(-1);
+    draw_marbles(+1);
+}
+
+function redraw() {
+    ctx.clearRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+    draw();
+}
+
+function action(which, option) {
+    if (which == 0) {
+        get_new_marbles(option);
+    } else {
+        rotate_marbles(which, option);
+    }
+    redraw();
+}
+
+function action_key(event) {
+    // 100 = d, 102 = f, 106 = j, 107 = k
+    if (event.keyCode == 100) action(-1, -1);
+    if (event.keyCode == 102) action(-1, +1);
+    if (event.keyCode == 106) action(+1, -1);
+    if (event.keyCode == 107) action(+1, +1);
+}
+
+function main() {
+    get_new_marbles();
+    draw();
+}
+
+main();
+window.addEventListener('keypress', action_key, false);
+document.getElementById('left-ccw').addEventListener('click', function() { action(-1, -1); });
+document.getElementById('left-cw').addEventListener('click', function() { action(-1, +1); });
+document.getElementById('right-ccw').addEventListener('click', function() { action(+1, -1); });
+document.getElementById('right-cw').addEventListener('click', function() { action(+1, +1); });
+document.getElementById('game-shuffle').addEventListener('click', function() { action(0, 1); });
+document.getElementById('game-clear').addEventListener('click', function() { action(0, 0); });
+</script>
+
+
+<style>
+canvas {
+    border: 1px solid #000;
+}
+.control-box {
+    display: inline-block;
+    border: 1px solid #999;
+    text-align: center;
+}
+</style>
