@@ -1,19 +1,11 @@
-<canvas id="canvas" width="1000" height="600"></canvas>
-<div class="control-box">
-    <h3>Left</h3>
-    <button class="rotate" id="left-ccw">↪️</button>
-    <button class="rotate" id="left-cw">↩️</button>
-</div>
-<div class="control-box">
-    <h3>Right</h3>
-    <button class="rotate" id="right-ccw">↪️</button>
-    <button class="rotate" id="right-cw">↩️</button>
-</div>
-<div class="control-box">
-    <h3>Rotate Marbles</h3>
-    <button id="game-shuffle">Shuffle</button>
-    <hr />
-    <button id="game-clear">Clear</button>
+<div class="container">
+  <canvas id="canvas" width="1000" height="600"></canvas>
+  <button class="rotate" id="left-cw">↗️️</button>
+  <button class="rotate" id="left-ccw">↘️️</button>
+  <button class="rotate" id="right-ccw">↖️️</button>
+  <button class="rotate" id="right-cw">↙️️</button>
+  <button class="control" id="game-shuffle">Shuffle</button>
+  <button class="control" id="game-clear">Clear</button>
 </div>
 
 
@@ -167,12 +159,41 @@ document.getElementById('game-clear').addEventListener('click', function() { act
 canvas {
     border: 1px solid #000;
 }
-.control-box {
+button {
+    position: absolute;
+}
+.container {
+    position: relative;
     display: inline-block;
-    border: 1px solid #999;
-    text-align: center;
 }
 .rotate {
-    font-size: 72px;
+    font-size: 96px;
+}
+.control {
+    font-size: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+#left-cw {
+    left: 4px;
+    top: 4px;
+}
+#left-ccw {
+    left: 4px;
+    bottom: 4px;
+}
+#right-ccw {
+    right: 4px;
+    top: 4px;
+}
+#right-cw {
+    right: 4px;
+    bottom: 4px;
+}
+#game-shuffle {
+    top: 18px;
+}
+#game-clear {
+    bottom: 18px;
 }
 </style>
